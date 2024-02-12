@@ -7,10 +7,11 @@ class MainLevel extends Phaser.Scene {
         console.log("MainLevel: init");
         
         this.ROTATION_VELOCITY = 2;
-        this.SPAWN_DELAY = 1000;
+        this.SPAWN_DELAY = 1500;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
-        this.KEY_TILE = "octagon";
+        this.RUNNER_COLLIDER_MULT = 4.6;
+        this.KEY_TILE = "octagon-trapezoid";
     }
 
     preload() {
@@ -38,6 +39,11 @@ class MainLevel extends Phaser.Scene {
             classType: Tile
         });
 
+        // PLAYER
+        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner").setScale(0.2);
+        this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
+        this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
+
         // DEBUG CODE
         // Show Debug toggle
         this.input.keyboard.on('keydown-D', function() {
@@ -59,9 +65,8 @@ class MainLevel extends Phaser.Scene {
 	{
         // INFO TEXT
 		const size = this.tileParent.getLength()
-		const used = this.tileParent.getTotalUsed()
-        document.getElementById('info').innerHTML = `<strong>Controls</strong> Left/Right Arrows: rotate | D: debug (toggle) ` +
-                                                    `\t\tsize: ${size} | spawned: ${used} | despawned: ${size-used}`;
+        document.getElementById('info').innerHTML = `<strong>Controls</strong> Left/Right Arrows: rotate | D: debug (${this.physics.world.drawDebug}) ` +
+                                                    `| visible: ${size}`;
 
         // INPUT
         let rotationAmount = 0
@@ -83,10 +88,19 @@ class MainLevel extends Phaser.Scene {
         // Spawns a round of new tiles!
         // ================
 
+        let totalGoodTiles = 4;
+        let goodTilesSoFar = 0;
+
         for (let i = 0; i < this.CHANNELS; i++) {
+            let good = true
+            if (goodTilesSoFar < totalGoodTiles)
+            {
+                if (Phaser.Math.Between(0,1) == 0) good = false;
+            }
+
             let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
-                                this.tileParent, true, this.TILE_SPEED, this.CHANNELS, i);
-            tile.setActive(true).setVisible(true).setScale(0.02);
+                                this.tileParent, good, this.TILE_SPEED, this.CHANNELS, i);
+            tile.setActive(true).setVisible(true).setScale(0.1);
 
             this.tileParent.add(tile);
         }

@@ -6,6 +6,8 @@ class MainMenu extends Phaser.Scene
 
     preload() {
         this.load.image("octagon", "./assets/sprites/placeholder/octagon.png");
+        this.load.image("octagon-trapezoid", "./assets/sprites/placeholder/octagon-trapezoid.png");
+        this.load.image("runner", "./assets/sprites/placeholder/runner.png");
 
         this.load.audio("music-intro", "./assets/sound/placeholder/dive-drive_intro.mp3");
         this.load.audio("music-loop", "./assets/sound/placeholder/dive-drive_loop.mp3");

@@ -3,8 +3,8 @@
 "use strict"
 
 let config = {
-    parent: "phaser-game",
-    type: Phaser.AUTO,
+    parent: 'phaser-game',  // for info text
+    type: Phaser.WEBGL,     // for tinting
     width: 1152,
     height: 648,
     render: {
