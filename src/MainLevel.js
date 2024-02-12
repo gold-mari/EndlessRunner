@@ -10,6 +10,7 @@ class MainLevel extends Phaser.Scene {
         this.SPAWN_DELAY = 1000;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
+        this.KEY_TILE = "octagon";
     }
 
     preload() {
@@ -32,7 +33,10 @@ class MainLevel extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
 
         // TILES
-        this.tileParent = this.physics.add.group();
+        this.tileParent = this.physics.add.group({ 
+            defaultKey: this.KEY_TILE,
+            classType: Tile
+        });
 
         // DEBUG CODE
         // Show Debug toggle
@@ -40,9 +44,6 @@ class MainLevel extends Phaser.Scene {
             this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
             this.physics.world.debugGraphic.clear()
         }, this)
-
-        // update instruction text
-        document.getElementById('info').innerHTML = '<strong>Controls</strong> Left/Right Arrows: rotate | D: debug (toggle)'
 
         // Timer code derived inspired by user James Skemp on StackOverflow:
         // https://stackoverflow.com/questions/62725455/how-to-run-a-function-each-minute-in-phaser-3
@@ -52,9 +53,16 @@ class MainLevel extends Phaser.Scene {
             callbackScope: this,
             callback: this.spawnTiles
         });
-    }
+	}
 
-    update() {
+	update()
+	{
+        // INFO TEXT
+		const size = this.tileParent.getLength()
+		const used = this.tileParent.getTotalUsed()
+        document.getElementById('info').innerHTML = `<strong>Controls</strong> Left/Right Arrows: rotate | D: debug (toggle) ` +
+                                                    `\t\tsize: ${size} | spawned: ${used} | despawned: ${size-used}`;
+
         // INPUT
         let rotationAmount = 0
         // handle left-right
@@ -65,8 +73,9 @@ class MainLevel extends Phaser.Scene {
         this.octagonA.angle += delta;
 
         // update tiles
-        this.tileParent.children.iterate(child => {
-            child.update(this.octagonA.angle);
+        this.tileParent.children.iterate(tile => {
+            if (tile) tile.update(this.octagonA.angle);
+            else this.tileParent.remove(tile);
         })
     }
 
@@ -75,11 +84,10 @@ class MainLevel extends Phaser.Scene {
         // ================
 
         for (let i = 0; i < this.CHANNELS; i++) {
-            let tile = new Tile(this, game.config.width/2, game.config.height/2, 
-                                "octagon", 0, true, 
-                                this.CHANNELS, i, this.TILE_SPEED);
-            tile.setScale(0.02);
-            tile.setGroup(this.tileParent);
+            let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
+                                this.tileParent, true, this.TILE_SPEED, this.CHANNELS, i);
+            tile.setActive(true).setVisible(true).setScale(0.02);
+
             this.tileParent.add(tile);
         }
     }

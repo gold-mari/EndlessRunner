@@ -1,26 +1,22 @@
 class Tile extends Phaser.GameObjects.Sprite
 {
-    constructor(scene, x, y, texture, frame, traversable, numberOfChannels, ourChannel, speed)
+    constructor(scene, x, y, texture, frame, group, traversable, moveSpeed, numberOfChannels, ourChannel)
     {
         super(scene, x, y, texture, frame);
 
         scene.add.existing(this);                       // add to existing scene
         scene.physics.add.existing(this);               // add to physics
         this.scene = scene;
+
+        this.group = group;
         this.traversable = traversable;
-        this.moveSpeed = speed;
+        this.moveSpeed = moveSpeed;
         this.numberOfChannels = numberOfChannels;
         this.ourChannel = ourChannel;
-        this.group = undefined;
 
         this.distanceFromCenter = 0;
         this.currentAngle = 0;
         this.center = new Phaser.Math.Vector2(x,y);
-    }
-
-    setGroup(group)
-    {
-        this.group = group;
     }
 
     update(angle)
@@ -37,20 +33,9 @@ class Tile extends Phaser.GameObjects.Sprite
         this.angle = angle;
 
         // simple out-of-bounds check
-        // if (!Phaser.Geom.Rectangle.Contains(this.scene.cameras.main.getBounds, this.x, this.y))
-        // {
-        //     if (this.group != undefined) {
-        //         console.log("removed!");
-        //         this.group.remove(this, true, true);
-        //     }
-        //     else {
-        //         console.log("destroyed!");
-        //         this.destroy();
-        //     }
-        // }
-        // else
-        // {
-        //     console.log("not out of bounds");
-        // }
+        if (this.body.checkWorldBounds())
+        {
+            this.group.remove(this, true, true)
+        }
     }
 }
