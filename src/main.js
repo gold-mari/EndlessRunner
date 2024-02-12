@@ -3,9 +3,10 @@
 "use strict"
 
 let config = {
+    parent: "phaser-game",
     type: Phaser.AUTO,
-    width: 1280,
-    height: 720,
+    width: 1152,
+    height: 648,
     render: {
         pixelArt: true
     },
