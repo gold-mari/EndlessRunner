@@ -12,7 +12,7 @@ class Tile extends Phaser.GameObjects.Sprite
 
         this.traversable = traversable;
         if (traversable) {
-            this.setTint(0x00FF00)
+            this.setTint(0xFFFFFF)
         }
         else {
             this.setTint(0xFF0000)

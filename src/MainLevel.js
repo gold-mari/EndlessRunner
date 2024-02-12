@@ -12,6 +12,10 @@ class MainLevel extends Phaser.Scene {
         this.CHANNELS = 8;
         this.RUNNER_COLLIDER_MULT = 4.6;
         this.KEY_TILE = "octagon-trapezoid";
+
+        this.RUNNER_DEPTH = 20;
+        this.FRAME_DEPTH = 10;
+        this.TILE_DEPTH = 0;
     }
 
     preload() {
@@ -20,7 +24,7 @@ class MainLevel extends Phaser.Scene {
 
     create() {
         // SPRITES AND ANIMATIONS
-        this.octagonA = this.add.sprite(width/2, height/2, "octagon").setScale(0.667);
+        this.octagonFrame = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.FRAME_DEPTH);
 
         // MUSIC AND SOUND
         this.music_intro = this.sound.add("music-intro");
@@ -40,7 +44,7 @@ class MainLevel extends Phaser.Scene {
         });
 
         // PLAYER
-        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner").setScale(0.2);
+        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner").setScale(0.2).setDepth(this.RUNNER_DEPTH);
         this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
         this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
 
@@ -75,11 +79,11 @@ class MainLevel extends Phaser.Scene {
         if (cursors.right.isDown) rotationAmount += 1;
 
         let delta = rotationAmount * this.ROTATION_VELOCITY;
-        this.octagonA.angle += delta;
+        this.octagonFrame.angle += delta;
 
         // update tiles
         this.tileParent.children.iterate(tile => {
-            if (tile) tile.update(this.octagonA.angle);
+            if (tile) tile.update(this.octagonFrame.angle);
             else this.tileParent.remove(tile);
         })
     }
@@ -99,7 +103,7 @@ class MainLevel extends Phaser.Scene {
             }
 
             let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
-                                this.tileParent, good, this.TILE_SPEED, this.CHANNELS, i);
+                                this.tileParent, good, this.TILE_SPEED, this.CHANNELS, i).setDepth(this.TILE_DEPTH);
             tile.setActive(true).setVisible(true).setScale(0.1);
 
             this.tileParent.add(tile);
