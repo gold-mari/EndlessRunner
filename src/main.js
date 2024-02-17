@@ -1,6 +1,6 @@
 // CMPM 120, Winter 2024
 // Dylan Mahler - Endless Runner
-// Bill Got Stuck in the INFINITE OCTAGON HALLWAY, Sucks for Him!
+// Bill Got Stuck in the INFINITE OCTAGON HALLWAY, Sucks to be Him! <3
 // Development time: ~25 hours
 // ================
 // Notes on creative tilt:
