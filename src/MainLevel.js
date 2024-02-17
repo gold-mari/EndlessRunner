@@ -23,14 +23,6 @@ class MainLevel extends Phaser.Scene {
     }
 
     create() {
-        // MUSIC AND SOUND ====================================================
-        // this.music_intro = this.sound.add("music-intro");
-        // this.music_loop = this.sound.add("music-loop");
-        // this.music_loop.loop = true;
-
-        // this.music_intro.once("complete", () => this.music_loop.play());
-        // this.music_intro.play();
-
         // INPUT ==============================================================
         cursors = this.input.keyboard.createCursorKeys();
         this.instructions = this.add.sprite(width/2, height*0.4, "instructions").setScale(0.7).setDepth(this.RUNNER_DEPTH).setAlpha(1);
