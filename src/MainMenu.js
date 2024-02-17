@@ -38,7 +38,7 @@ class MainMenu extends Phaser.Scene
 
     create() {
         // display menu        
-        this.add.sprite(game.config.width*0.5,game.config.height*0.4, "logo").setOrigin(0.5).setScale(0.6);
+        this.add.sprite(game.config.width*0.5,game.config.height*0.4, "logo").setOrigin(0.5).setScale(0.5);
         this.anykey = this.add.sprite(game.config.width*0.5,game.config.height*0.8, "anykey").setOrigin(0.5).setScale(0.35);
 
         // flash 'anykey' prompt
