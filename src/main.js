@@ -1,6 +1,7 @@
 // CMPM 120, Winter 2024
 // Dylan Mahler - Endless Runner
 // Bill Got Stuck in the INFINITE OCTAGON HALLWAY, Sucks for Him!
+// Development time: ~25 hours
 // ================
 // Notes on creative tilt:
 // 1.   My endless runner takes place in pseudo-3D space, where the player seemingly runs around a tunnel
