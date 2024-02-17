@@ -25,12 +25,12 @@ class MainLevel extends Phaser.Scene {
 
     create() {
         // MUSIC AND SOUND ====================================================
-        this.music_intro = this.sound.add("music-intro");
-        this.music_loop = this.sound.add("music-loop");
-        this.music_loop.loop = true;
+        // this.music_intro = this.sound.add("music-intro");
+        // this.music_loop = this.sound.add("music-loop");
+        // this.music_loop.loop = true;
 
-        this.music_intro.once("complete", () => this.music_loop.play());
-        this.music_intro.play();
+        // this.music_intro.once("complete", () => this.music_loop.play());
+        // this.music_intro.play();
 
         // INPUT ==============================================================
         cursors = this.input.keyboard.createCursorKeys();   
@@ -119,6 +119,8 @@ class MainLevel extends Phaser.Scene {
     spawnTiles() {
         // Spawns a round of new tiles!
         // ================
+
+        this.sound.play("whoosh");
 
         let totalTiles = 4;
         let tilesSoFar = 0;
