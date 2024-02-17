@@ -4,8 +4,9 @@ class MainLevel extends Phaser.Scene {
     }
 
     init() {        
-        this.ROTATION_VELOCITY = 4;
+        this.ROTATION_VELOCITY = 6;
         this.SPAWN_DELAY = 2000;
+        this.DIFFICULTY_DELAY = 10000;
         this.INVINCIBILITY_TIME = 1000;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
@@ -65,6 +66,24 @@ class MainLevel extends Phaser.Scene {
         // PHYSICS AND COLLISION ==============================================
         this.physics.add.collider(this.runner, this.tileParent, this.handleCollision, null, this);
 
+        // DIFFICULTY MANAGEMENT ==============================================
+        this.minTiles = 2;
+        this.maxTiles = 4;
+        // Timer code derived inspired by user James Skemp on StackOverflow:
+        // https://stackoverflow.com/questions/62725455/how-to-run-a-function-each-minute-in-phaser-3
+        this.difficultyTimer = this.time.addEvent({
+            delay: this.DIFFICULTY_DELAY,
+            loop: true,
+            callbackScope: this,
+            callback: () => {
+                this.minTiles = (this.minTiles == 0) ? 2 : this.minTiles-1;
+                this.maxTiles = (this.maxTiles == this.CHANNELS-1) ? 4 : this.maxTiles+1;
+                this.SPAWN_DELAY = Math.max(1500,this.SPAWN_DELAY-10);
+                this.spawnTimer.delay = this.SPAWN_DELAY;
+                this.TILE_SPEED += 0.1;
+            }
+        });
+
         // DEBUG CODE =========================================================
         // Show Debug toggle
         this.input.keyboard.on('keydown-D', function() {
@@ -72,8 +91,6 @@ class MainLevel extends Phaser.Scene {
             this.physics.world.debugGraphic.clear()
         }, this)
 
-        // Timer code derived inspired by user James Skemp on StackOverflow:
-        // https://stackoverflow.com/questions/62725455/how-to-run-a-function-each-minute-in-phaser-3
         this.spawnTimer = this.time.addEvent({
             delay: this.SPAWN_DELAY,
             loop: true,
@@ -119,28 +136,42 @@ class MainLevel extends Phaser.Scene {
     spawnTiles() {
         // Spawns a round of new tiles!
         // ================
+        
+        let indices = this.generateIndices(this.minTiles, this.maxTiles, this.CHANNELS);
+        if (indices.size == 0) return;
 
         this.sound.play("whoosh");
+        for (const index of indices) {
+            let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
+                                this.tileParent, false, this.TILE_SPEED, this.CHANNELS, index).setDepth(this.TILE_DEPTH);
+            tile.setActive(true).setVisible(true).setScale(0.1);
+            this.tileParent.add(tile);
+        }
+    }
 
-        let totalTiles = 4;
-        let tilesSoFar = 0;
+    generateIndices(minLength, maxLength, numberOfValues)
+    {
+        // Generates a list of random indices, where the number of indices is between minLength
+        // and maxLength, and the indices themselves are between 0 and numberOfValues-1.
+        // ================
 
-        for (let i = 0; i < this.CHANNELS; i++) {
-            if (tilesSoFar < totalTiles)
-            {
-                if (Phaser.Math.Between(0,1) == 0) {
-                    continue;
-                }
-                else {
-                    tilesSoFar++;
-                }
+        if (maxLength > numberOfValues) {
+            maxLength = numberOfValues;
+        }
+        else {
+            let targetLength = Math.floor((Math.random()*(maxLength-minLength+1))) + minLength;
+
+            if (targetLength == numberOfValues) {
+                // Return the set of all possible indices.
+                return new Set(Array(numberOfValues).fill().map((element, index))); 
             }
 
-            let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
-                                this.tileParent, false, this.TILE_SPEED, this.CHANNELS, i).setDepth(this.TILE_DEPTH);
-            tile.setActive(true).setVisible(true).setScale(0.1);
-
-            this.tileParent.add(tile);
+            // Otherwise, generate random indices.
+            let ourSet = new Set();
+            while (ourSet.size < targetLength) {
+                ourSet.add(Math.floor(Math.random() * (numberOfValues+1)));
+            }
+            return ourSet;
         }
     }
 
@@ -149,6 +180,7 @@ class MainLevel extends Phaser.Scene {
             return;
         } else { // They aren't currently invincible. Mark them as such, so this function is only called once.
             this.runner.invincible = true;
+            this.runner.setTint(0xff5555);
         }
 
         this.playHurtNoise();
@@ -159,6 +191,7 @@ class MainLevel extends Phaser.Scene {
             callbackScope: this,
             callback: () => {
                 this.runner.invincible = false
+                this.runner.setTint(0xffffff);
             }
         });
     }
