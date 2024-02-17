@@ -46,10 +46,26 @@ class MainLevel extends Phaser.Scene {
         });
 
         // PLAYER =============================================================
-        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner")
-        this.runner.setScale(0.2).setDepth(this.RUNNER_DEPTH);
-        this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
-        this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
+        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner", 0)
+        this.runner.setScale(0.5).setDepth(this.RUNNER_DEPTH);
+        this.runner.body.setSize(this.runner.width,50);
+        this.runner.body.setOffset(0,this.runner.height-50);
+
+        this.anims.create({
+            key: "idle",
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("runner", {start: 0, end: 1})
+        });
+        this.runner.play("idle");
+
+        this.anims.create({
+            key: "run",
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("runner", {start: 2, end: 3})
+        });
+        
 
         // DEBUG CODE =========================================================
         // Show Debug toggle
@@ -80,6 +96,18 @@ class MainLevel extends Phaser.Scene {
         // handle left-right
         if (cursors.left.isDown) rotationAmount += -1;
         if (cursors.right.isDown) rotationAmount += 1;
+
+        console.log(rotationAmount);
+
+        if (rotationAmount == 0 && this.runner.anims.getName() != "idle") {
+            this.runner.play("idle");
+        }
+        else if (rotationAmount != 0 && this.runner.anims.getName() != "run") {
+            this.runner.play("run");
+        }
+
+        if (rotationAmount > 0) this.runner.flipX = false;
+        if (rotationAmount < 0) this.runner.flipX = true;
 
         let delta = rotationAmount * this.ROTATION_VELOCITY;
         this.octagonBack.angle += delta;
