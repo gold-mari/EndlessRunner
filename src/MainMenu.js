@@ -10,29 +10,29 @@ class MainMenu extends Phaser.Scene
     }
     
     preload() {
-        this.load.image("logo", "./assets/sprites/final/logo.png");
-        this.load.image("anykey", "./assets/sprites/final/anykey.png");
+        this.load.image("logo", "./assets/sprites/logo.png");
+        this.load.image("anykey", "./assets/sprites/anykey.png");
 
-        this.load.image("instructions", "./assets/sprites/final/instructions.png");
-        this.load.image("octagon-back", "./assets/sprites/final/octagon-back.png");
-        this.load.image("octagon-lines", "./assets/sprites/final/octagon-lines.png");
-        this.load.image("octagon-trapezoid", "./assets/sprites/final/octagon-trapezoid.png");
+        this.load.image("instructions", "./assets/sprites/instructions.png");
+        this.load.image("octagon-back", "./assets/sprites/octagon-back.png");
+        this.load.image("octagon-lines", "./assets/sprites/octagon-lines.png");
+        this.load.image("octagon-trapezoid", "./assets/sprites/octagon-trapezoid.png");
 
-        this.load.spritesheet("runner", "./assets/sprites/final/runner.png", { frameWidth: 200, frameHeight: 200 });
-        this.load.spritesheet("heart", "./assets/sprites/final/hearts.png", { frameWidth: 80, frameHeight: 80 });
+        this.load.spritesheet("runner", "./assets/sprites/runner.png", { frameWidth: 200, frameHeight: 200 });
+        this.load.spritesheet("heart", "./assets/sprites/hearts.png", { frameWidth: 80, frameHeight: 80 });
 
-        this.load.audio("menu-bark", "./assets/sound/final/bill-got-stuck.mp3");
-        this.load.audio("main-theme", "./assets/sound/final/main-theme.mp3");
+        this.load.audio("menu-bark", "./assets/sound/bill-got-stuck.mp3");
+        this.load.audio("main-theme", "./assets/sound/main-theme.mp3");
 
-        this.load.audio("lets-do-this", "./assets/sound/final/lets-do-this.mp3");
-        this.load.audio("whoosh", "./assets/sound/final/whoosh.mp3");
-        this.load.audio("pain-0", "./assets/sound/final/pain-0.mp3");
-        this.load.audio("pain-1", "./assets/sound/final/pain-1.mp3");
-        this.load.audio("pain-2", "./assets/sound/final/pain-2.mp3");
-        this.load.audio("pain-3", "./assets/sound/final/pain-3.mp3");
-        this.load.audio("pain-4", "./assets/sound/final/pain-4.mp3");
-        this.load.audio("pain-5", "./assets/sound/final/pain-5.mp3");
-        this.load.audio("i-give-up", "./assets/sound/final/lose.mp3");
+        this.load.audio("lets-do-this", "./assets/sound/lets-do-this.mp3");
+        this.load.audio("whoosh", "./assets/sound/whoosh.mp3");
+        this.load.audio("pain-0", "./assets/sound/pain-0.mp3");
+        this.load.audio("pain-1", "./assets/sound/pain-1.mp3");
+        this.load.audio("pain-2", "./assets/sound/pain-2.mp3");
+        this.load.audio("pain-3", "./assets/sound/pain-3.mp3");
+        this.load.audio("pain-4", "./assets/sound/pain-4.mp3");
+        this.load.audio("pain-5", "./assets/sound/pain-5.mp3");
+        this.load.audio("i-give-up", "./assets/sound/lose.mp3");
     }
 
     create() {
