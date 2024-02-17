@@ -237,18 +237,19 @@ class MainLevel extends Phaser.Scene {
             // Update our hearts display.
             this.heartsDict[this.runner.health].setFrame(1).setAlpha(0.5).setTint(0xff5555);
 
-            // Handle game over.
             if (this.runner.health == 0) {
+                // Handle game over.
                 this.runner.dead = true;
                 this.runner.play("dead");
+                this.sound.play("i-give-up");
+
                 this.spawnTimer.destroy();
                 this.endingTextA.setAlpha(1);
                 this.endingTextB.setAlpha(1);
-                console.log("GAME OVER.");
+            } else {
+                this.playHurtNoise();
             }
         }
-
-        this.playHurtNoise();
 
         this.time.addEvent({
             delay: this.INVINCIBILITY_TIME,
