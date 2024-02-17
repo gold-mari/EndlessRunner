@@ -141,12 +141,13 @@ class MainLevel extends Phaser.Scene {
 
 	update()
 	{
-        // INPUT
+        // INPUT ====
         let rotationAmount = 0
         // handle left-right
         if (cursors.left.isDown) rotationAmount += -1;
         if (cursors.right.isDown) rotationAmount += 1;
 
+        // ROTATION ====
         if (!this.runner.dead) {
             if (rotationAmount == 0 && this.runner.anims.getName() != "idle") {
                 this.runner.play("idle");
@@ -178,7 +179,7 @@ class MainLevel extends Phaser.Scene {
             }
         }
 
-        // quit to menu
+        // QUIT ====
         if (esc.isDown) {
             this.scene.start("mainMenuScene");
         }
