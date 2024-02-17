@@ -3,7 +3,8 @@ class MainLevel extends Phaser.Scene {
         super('mainLevelScene')
     }
 
-    init() {        
+    init() {
+        this.INSTRUCTION_FADE_TIME = 4000;
         this.ROTATION_VELOCITY = 6;
         this.SPAWN_DELAY = 2000;
         this.DIFFICULTY_DELAY = 10000;
@@ -31,11 +32,16 @@ class MainLevel extends Phaser.Scene {
         // this.music_intro.play();
 
         // INPUT ==============================================================
-        cursors = this.input.keyboard.createCursorKeys();   
+        cursors = this.input.keyboard.createCursorKeys();
+        this.instructions = this.add.sprite(width/2, height*0.4, "instructions").setScale(0.7).setDepth(this.RUNNER_DEPTH).setAlpha(1);
+        this.tweens.add({
+            targets: this.instructions,
+            alpha: { value: 0, duration: this.INSTRUCTION_FADE_TIME, ease: 'Linear' }
+        });
 
         // BACKGROUND AND TILES ===============================================
-        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setScale(1).setDepth(this.BACK_DEPTH);
-        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.LINES_DEPTH).setAlpha(1);
+        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setDepth(this.BACK_DEPTH);
+        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setDepth(this.LINES_DEPTH);
         this.tileParent = this.physics.add.group({ 
             defaultKey: this.KEY_TILE,
             classType: Tile

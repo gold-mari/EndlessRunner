@@ -13,6 +13,7 @@ class MainMenu extends Phaser.Scene
         this.load.image("logo", "./assets/sprites/final/logo.png");
         this.load.image("anykey", "./assets/sprites/final/anykey.png");
 
+        this.load.image("instructions", "./assets/sprites/final/instructions.png");
         this.load.image("octagon-back", "./assets/sprites/final/octagon-back.png");
         this.load.image("octagon-lines", "./assets/sprites/final/octagon-lines.png");
         this.load.image("octagon-trapezoid", "./assets/sprites/final/octagon-trapezoid.png");
