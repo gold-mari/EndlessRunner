@@ -7,7 +7,7 @@ class MainLevel extends Phaser.Scene {
         this.INSTRUCTION_FADE_TIME = 4000;
         this.ROTATION_VELOCITY = 6;
         this.SPAWN_DELAY = 2000;
-        this.DIFFICULTY_DELAY = 10000;
+        this.DIFFICULTY_DELAY = 4000;
         this.INVINCIBILITY_TIME = 1000;
         this.TILE_SPEED = 1;
         this.MAX_HEALTH = 5;
@@ -103,34 +103,44 @@ class MainLevel extends Phaser.Scene {
             callback: () => {
                 this.minTiles = (this.minTiles == 0) ? 2 : this.minTiles-1;
                 this.maxTiles = (this.maxTiles == this.CHANNELS-1) ? 4 : this.maxTiles+1;
-                this.SPAWN_DELAY = Math.max(1500,this.SPAWN_DELAY-10);
+                this.SPAWN_DELAY = Math.max(1500,this.SPAWN_DELAY-50);
                 this.spawnTimer.delay = this.SPAWN_DELAY;
-                this.TILE_SPEED += 0.1;
+                this.TILE_SPEED += 0.75;
             }
         });
 
-        // GAME TIMER
+        // GAME TIMER =========================================================
         this.startTime = this.game.getTime();
-        let scoreConfig = 
+        this.elapsedTime = (this.game.getTime() - this.startTime)/1000;
+        let timerConfig = 
         {
             fontFamily: "Arial",
-            fortSize: "40px",
-            backgroundColor: "#ffffff",
+            fontSize: 70,
             color: "#111111",
-            align: "right",
+            align: "center",
             padding: 
             {
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 100
         }
+        let endingTextConfig = { ...timerConfig };
+        endingTextConfig.fontSize = 30;
+        endingTextConfig.backgroundColor = "#ffffff";
+
+        this.endingTextA = this.add.text(width/2, height*0.4, "  BILL WAS ABLE TO RUN FOR:  ", endingTextConfig).setDepth(this.RUNNER_DEPTH-1).setOrigin(0.5).setAlpha(0);
+        this.endingTextB = this.add.text(width/2, height*0.65, "  SECONDS BEFORE SUCCUMBING TO ENNUI.  \n" +
+                                                              "  SPACE to play again!  \n" +
+                                                              "  ESC to return to the menu!  ", endingTextConfig).setDepth(this.RUNNER_DEPTH-1).setOrigin(0.5).setAlpha(0);
+        this.timerText = this.add.text(width/2, height/2, this.elapsedTime, timerConfig).setDepth(this.RUNNER_DEPTH-1).setOrigin(0.5).setAlpha(0);
+        this.tweens.add({
+            targets: this.timerText,
+            alpha: { value: 1, duration: this.INSTRUCTION_FADE_TIME, ease: 'Linear' }
+        });
 	}
 
 	update()
 	{
-        console.log((this.game.getTime() - this.startTime)/1000);
-
         // INPUT
         let rotationAmount = 0
         // handle left-right
@@ -157,13 +167,20 @@ class MainLevel extends Phaser.Scene {
                 if (tile) tile.update(this.octagonLines.angle);
                 else this.tileParent.remove(tile);
             })
+
+            // update timer
+            this.elapsedTime = (this.game.getTime() - this.startTime)/1000;
+            this.timerText.text = Math.floor(this.elapsedTime);
+            this.timerText.setOrigin(0.5);
         } else { // runner is dead, prompt reset
-            if (esc.isDown) {
-                this.scene.start("mainMenuScene");
-            }
             if (spacebar.isDown) {
                 this.scene.start("mainLevelScene");
             }
+        }
+
+        // quit to menu
+        if (esc.isDown) {
+            this.scene.start("mainMenuScene");
         }
     }
 
@@ -225,6 +242,8 @@ class MainLevel extends Phaser.Scene {
                 this.runner.dead = true;
                 this.runner.play("dead");
                 this.spawnTimer.destroy();
+                this.endingTextA.setAlpha(1);
+                this.endingTextB.setAlpha(1);
                 console.log("GAME OVER.");
             }
         }
