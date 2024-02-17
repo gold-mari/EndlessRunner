@@ -4,7 +4,7 @@ class MainLevel extends Phaser.Scene {
     }
 
     init() {        
-        this.ROTATION_VELOCITY = 2;
+        this.ROTATION_VELOCITY = 4;
         this.SPAWN_DELAY = 2000;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
@@ -33,7 +33,7 @@ class MainLevel extends Phaser.Scene {
         this.music_intro.play();
 
         // INPUT ==============================================================
-        cursors = this.input.keyboard.createCursorKeys();
+        cursors = this.input.keyboard.createCursorKeys();   
 
         // BACKGROUND AND TILES ===============================================
         this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setScale(1).setDepth(this.BACK_DEPTH);
@@ -44,8 +44,8 @@ class MainLevel extends Phaser.Scene {
         });
 
         // PLAYER =============================================================
-        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner", 0)
-        this.runner.setScale(0.5).setDepth(this.RUNNER_DEPTH);
+        this.runner = this.physics.add.sprite(game.config.width/2, 6*game.config.height/7, "runner", 0)
+        this.runner.setScale(0.33).setDepth(this.RUNNER_DEPTH);
         this.runner.body.setSize(this.runner.width,50);
         this.runner.body.setOffset(0,this.runner.height-50);
 
@@ -94,8 +94,6 @@ class MainLevel extends Phaser.Scene {
         // handle left-right
         if (cursors.left.isDown) rotationAmount += -1;
         if (cursors.right.isDown) rotationAmount += 1;
-
-        console.log(rotationAmount);
 
         if (rotationAmount == 0 && this.runner.anims.getName() != "idle") {
             this.runner.play("idle");
