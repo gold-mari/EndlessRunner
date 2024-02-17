@@ -6,9 +6,10 @@ class MainLevel extends Phaser.Scene {
     init() {        
         this.ROTATION_VELOCITY = 4;
         this.SPAWN_DELAY = 2000;
+        this.INVINCIBILITY_TIME = 1000;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
-        this.RUNNER_COLLIDER_MULT = 4.6;
+        this.RUNNER_COLLIDER_MULT = 2.6;
         this.KEY_TILE = "octagon-trapezoid";
 
         this.RUNNER_DEPTH = 30;
@@ -17,10 +18,6 @@ class MainLevel extends Phaser.Scene {
         this.BACK_DEPTH = 0;
 
         this.physics.world.drawDebug = false;
-    }
-
-    preload() {
-        
     }
 
     create() {
@@ -46,8 +43,9 @@ class MainLevel extends Phaser.Scene {
         // PLAYER =============================================================
         this.runner = this.physics.add.sprite(game.config.width/2, 6*game.config.height/7, "runner", 0)
         this.runner.setScale(0.33).setDepth(this.RUNNER_DEPTH);
-        this.runner.body.setSize(this.runner.width,50);
-        this.runner.body.setOffset(0,this.runner.height-50);
+        this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
+        this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
+        this.runner.invincible = false;
 
         this.anims.create({
             key: "idle",
@@ -64,6 +62,8 @@ class MainLevel extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers("runner", {start: 2, end: 3})
         });
         
+        // PHYSICS AND COLLISION ==============================================
+        this.physics.add.collider(this.runner, this.tileParent, this.handleCollision, null, this);
 
         // DEBUG CODE =========================================================
         // Show Debug toggle
@@ -142,5 +142,37 @@ class MainLevel extends Phaser.Scene {
 
             this.tileParent.add(tile);
         }
+    }
+
+    handleCollision() {
+        if (this.runner.invincible) {
+            return;
+        } else { // They aren't currently invincible. Mark them as such, so this function is only called once.
+            this.runner.invincible = true;
+        }
+
+        this.playHurtNoise();
+
+        this.time.addEvent({
+            delay: this.INVINCIBILITY_TIME,
+            loop: false,
+            callbackScope: this,
+            callback: () => {
+                this.runner.invincible = false
+            }
+        });
+    }
+
+    playHurtNoise() {
+        // Plays a random hurt noise! :D
+        // ================
+
+        if (Math.floor(Math.random() * 10) == 0) {  // 10% chance to play sound 5
+            this.sound.play("pain-5");
+            return;
+        }
+
+        let rng = Math.floor(Math.random() * 5);    // sounds 0-4
+        this.sound.play(`pain-${rng}`);
     }
 }

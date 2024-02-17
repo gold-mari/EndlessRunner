@@ -27,6 +27,12 @@ class MainMenu extends Phaser.Scene
 
         this.load.audio("lets-do-this", "./assets/sound/final/lets-do-this.mp3");
         this.load.audio("whoosh", "./assets/sound/final/whoosh.mp3");
+        this.load.audio("pain-0", "./assets/sound/final/pain-0.mp3");
+        this.load.audio("pain-1", "./assets/sound/final/pain-1.mp3");
+        this.load.audio("pain-2", "./assets/sound/final/pain-2.mp3");
+        this.load.audio("pain-3", "./assets/sound/final/pain-3.mp3");
+        this.load.audio("pain-4", "./assets/sound/final/pain-4.mp3");
+        this.load.audio("pain-5", "./assets/sound/final/pain-5.mp3");
     }
 
     create() {
