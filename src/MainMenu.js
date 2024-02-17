@@ -18,10 +18,8 @@ class MainMenu extends Phaser.Scene
         this.load.image("octagon-lines", "./assets/sprites/final/octagon-lines.png");
         this.load.image("octagon-trapezoid", "./assets/sprites/final/octagon-trapezoid.png");
 
-        this.load.spritesheet("runner", "./assets/sprites/final/runner.png", {
-            frameWidth: 200,
-            frameHeight: 200
-        })
+        this.load.spritesheet("runner", "./assets/sprites/final/runner.png", { frameWidth: 200, frameHeight: 200 });
+        this.load.spritesheet("heart", "./assets/sprites/final/hearts.png", { frameWidth: 80, frameHeight: 80 });
 
         this.load.audio("menu-bark", "./assets/sound/final/bill-got-stuck.mp3");
         this.load.audio("main-theme", "./assets/sound/final/main-theme.mp3");

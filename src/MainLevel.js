@@ -35,14 +35,6 @@ class MainLevel extends Phaser.Scene {
             alpha: { value: 0, duration: this.INSTRUCTION_FADE_TIME, ease: 'Linear' }
         });
 
-        // BACKGROUND AND TILES ===============================================
-        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setDepth(this.BACK_DEPTH);
-        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setDepth(this.LINES_DEPTH);
-        this.tileParent = this.physics.add.group({ 
-            defaultKey: this.KEY_TILE,
-            classType: Tile
-        });
-
         // PLAYER =============================================================
         this.runner = this.physics.add.sprite(game.config.width/2, 6*game.config.height/7, "runner", 0)
         this.runner.setScale(0.33).setDepth(this.RUNNER_DEPTH);
@@ -73,6 +65,28 @@ class MainLevel extends Phaser.Scene {
             repeat: -1,
             frames: this.anims.generateFrameNumbers("runner", {start: 4, end: 5})
         });
+
+        // HEARTS =============================================================
+        this.heartsDict = {};
+        for (let i=0; i<this.MAX_HEALTH; i++) {
+            let heart = this.add.sprite((i*80)+50, 50, "heart", 0).setDepth(this.RUNNER_DEPTH);
+            this.heartsDict[i] = heart;
+        }
+
+        // BACKGROUND AND TILES ===============================================
+        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setDepth(this.BACK_DEPTH);
+        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setDepth(this.LINES_DEPTH);
+        this.tileParent = this.physics.add.group({ 
+            defaultKey: this.KEY_TILE,
+            classType: Tile
+        });
+
+        this.spawnTimer = this.time.addEvent({
+            delay: this.SPAWN_DELAY,
+            loop: true,
+            callbackScope: this,
+            callback: this.spawnTiles
+        });
         
         // PHYSICS AND COLLISION ==============================================
         this.physics.add.collider(this.runner, this.tileParent, this.handleCollision, null, this);
@@ -95,23 +109,28 @@ class MainLevel extends Phaser.Scene {
             }
         });
 
-        // DEBUG CODE =========================================================
-        // Show Debug toggle
-        this.input.keyboard.on('keydown-D', function() {
-            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
-            this.physics.world.debugGraphic.clear()
-        }, this)
-
-        this.spawnTimer = this.time.addEvent({
-            delay: this.SPAWN_DELAY,
-            loop: true,
-            callbackScope: this,
-            callback: this.spawnTiles
-        });
+        // GAME TIMER
+        this.startTime = this.game.getTime();
+        let scoreConfig = 
+        {
+            fontFamily: "Arial",
+            fortSize: "40px",
+            backgroundColor: "#ffffff",
+            color: "#111111",
+            align: "right",
+            padding: 
+            {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 100
+        }
 	}
 
 	update()
 	{
+        console.log((this.game.getTime() - this.startTime)/1000);
+
         // INPUT
         let rotationAmount = 0
         // handle left-right
@@ -197,9 +216,12 @@ class MainLevel extends Phaser.Scene {
             this.runner.invincible = true;
             this.runner.setTint(0xff5555);
             this.runner.health--;
-            
+
+            // Update our hearts display.
+            this.heartsDict[this.runner.health].setFrame(1).setAlpha(0.5).setTint(0xff5555);
+
+            // Handle game over.
             if (this.runner.health == 0) {
-                // Handle game over.
                 this.runner.dead = true;
                 this.runner.play("dead");
                 this.spawnTimer.destroy();
