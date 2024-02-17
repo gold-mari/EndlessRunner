@@ -15,7 +15,7 @@ class Tile extends Phaser.GameObjects.Sprite
             this.setTint(0xFFFFFF)
         }
         else {
-            this.setTint(0xFF0000)
+            this.setTint(0x000000)
         }
 
         this.moveSpeed = moveSpeed;

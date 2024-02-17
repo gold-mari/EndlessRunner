@@ -5,6 +5,7 @@ class MainMenu extends Phaser.Scene
     }
 
     preload() {
+        this.load.image("octagon-back", "./assets/sprites/placeholder/octagon-back.png");
         this.load.image("octagon-lines", "./assets/sprites/placeholder/octagon-lines.png");
         this.load.image("octagon-trapezoid", "./assets/sprites/placeholder/octagon-trapezoid.png");
         this.load.image("runner", "./assets/sprites/placeholder/runner.png");

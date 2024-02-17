@@ -3,19 +3,20 @@ class MainLevel extends Phaser.Scene {
         super('mainLevelScene')
     }
 
-    init() {
-        console.log("MainLevel: init");
-        
+    init() {        
         this.ROTATION_VELOCITY = 2;
-        this.SPAWN_DELAY = 1500;
+        this.SPAWN_DELAY = 2000;
         this.TILE_SPEED = 1;
         this.CHANNELS = 8;
         this.RUNNER_COLLIDER_MULT = 4.6;
         this.KEY_TILE = "octagon-trapezoid";
 
-        this.RUNNER_DEPTH = 20;
-        this.FRAME_DEPTH = 10;
-        this.TILE_DEPTH = 0;
+        this.RUNNER_DEPTH = 30;
+        this.LINES_DEPTH = 20;
+        this.TILE_DEPTH = 10;
+        this.BACK_DEPTH = 0;
+
+        this.physics.world.drawDebug = false;
     }
 
     preload() {
@@ -23,10 +24,11 @@ class MainLevel extends Phaser.Scene {
     }
 
     create() {
-        // SPRITES AND ANIMATIONS
-        this.octagonFrame = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.FRAME_DEPTH);
+        // SPRITES AND ANIMATIONS =============================================
+        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setScale(1).setDepth(this.BACK_DEPTH);
+        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.LINES_DEPTH);
 
-        // MUSIC AND SOUND
+        // MUSIC AND SOUND ====================================================
         this.music_intro = this.sound.add("music-intro");
         this.music_loop = this.sound.add("music-loop");
         this.music_loop.loop = true;
@@ -34,21 +36,22 @@ class MainLevel extends Phaser.Scene {
         this.music_intro.once("complete", () => this.music_loop.play());
         this.music_intro.play();
 
-        // INPUT
+        // INPUT ==============================================================
         cursors = this.input.keyboard.createCursorKeys();
 
-        // TILES
+        // TILES ==============================================================
         this.tileParent = this.physics.add.group({ 
             defaultKey: this.KEY_TILE,
             classType: Tile
         });
 
-        // PLAYER
-        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner").setScale(0.2).setDepth(this.RUNNER_DEPTH);
+        // PLAYER =============================================================
+        this.runner = this.physics.add.sprite(game.config.width/2, 4*game.config.height/5, "runner")
+        this.runner.setScale(0.2).setDepth(this.RUNNER_DEPTH);
         this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
         this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
 
-        // DEBUG CODE
+        // DEBUG CODE =========================================================
         // Show Debug toggle
         this.input.keyboard.on('keydown-D', function() {
             this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
@@ -79,11 +82,12 @@ class MainLevel extends Phaser.Scene {
         if (cursors.right.isDown) rotationAmount += 1;
 
         let delta = rotationAmount * this.ROTATION_VELOCITY;
-        this.octagonFrame.angle += delta;
+        this.octagonBack.angle += delta;
+        this.octagonLines.angle += delta;
 
         // update tiles
         this.tileParent.children.iterate(tile => {
-            if (tile) tile.update(this.octagonFrame.angle);
+            if (tile) tile.update(this.octagonLines.angle);
             else this.tileParent.remove(tile);
         })
     }
@@ -92,18 +96,22 @@ class MainLevel extends Phaser.Scene {
         // Spawns a round of new tiles!
         // ================
 
-        let totalGoodTiles = 4;
-        let goodTilesSoFar = 0;
+        let totalTiles = 4;
+        let tilesSoFar = 0;
 
         for (let i = 0; i < this.CHANNELS; i++) {
-            let good = true
-            if (goodTilesSoFar < totalGoodTiles)
+            if (tilesSoFar < totalTiles)
             {
-                if (Phaser.Math.Between(0,1) == 0) good = false;
+                if (Phaser.Math.Between(0,1) == 0) {
+                    continue;
+                }
+                else {
+                    tilesSoFar++;
+                }
             }
 
             let tile = new Tile(this, game.config.width/2, game.config.height/2, this.KEY_TILE, 0,
-                                this.tileParent, good, this.TILE_SPEED, this.CHANNELS, i).setDepth(this.TILE_DEPTH);
+                                this.tileParent, false, this.TILE_SPEED, this.CHANNELS, i).setDepth(this.TILE_DEPTH);
             tile.setActive(true).setVisible(true).setScale(0.1);
 
             this.tileParent.add(tile);
