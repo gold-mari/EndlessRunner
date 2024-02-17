@@ -5,9 +5,9 @@ class MainMenu extends Phaser.Scene
     }
 
     preload() {
-        this.load.image("octagon-back", "./assets/sprites/placeholder/octagon-back.png");
-        this.load.image("octagon-lines", "./assets/sprites/placeholder/octagon-lines.png");
-        this.load.image("octagon-trapezoid", "./assets/sprites/placeholder/octagon-trapezoid.png");
+        this.load.image("octagon-back", "./assets/sprites/final/octagon-back.png");
+        this.load.image("octagon-lines", "./assets/sprites/final/octagon-lines.png");
+        this.load.image("octagon-trapezoid", "./assets/sprites/final/octagon-trapezoid.png");
 
         this.load.spritesheet("runner", "./assets/sprites/final/runner.png", {
             frameWidth: 200,

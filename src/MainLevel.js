@@ -24,10 +24,6 @@ class MainLevel extends Phaser.Scene {
     }
 
     create() {
-        // SPRITES AND ANIMATIONS =============================================
-        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setScale(1).setDepth(this.BACK_DEPTH);
-        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.LINES_DEPTH);
-
         // MUSIC AND SOUND ====================================================
         this.music_intro = this.sound.add("music-intro");
         this.music_loop = this.sound.add("music-loop");
@@ -39,7 +35,9 @@ class MainLevel extends Phaser.Scene {
         // INPUT ==============================================================
         cursors = this.input.keyboard.createCursorKeys();
 
-        // TILES ==============================================================
+        // BACKGROUND AND TILES ===============================================
+        this.octagonBack = this.add.sprite(width/2, height/2, "octagon-back").setScale(1).setDepth(this.BACK_DEPTH);
+        this.octagonLines = this.add.sprite(width/2, height/2, "octagon-lines").setScale(1).setDepth(this.LINES_DEPTH).setAlpha(1);
         this.tileParent = this.physics.add.group({ 
             defaultKey: this.KEY_TILE,
             classType: Tile
