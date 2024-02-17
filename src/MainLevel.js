@@ -10,6 +10,7 @@ class MainLevel extends Phaser.Scene {
         this.DIFFICULTY_DELAY = 10000;
         this.INVINCIBILITY_TIME = 1000;
         this.TILE_SPEED = 1;
+        this.MAX_HEALTH = 5;
         this.CHANNELS = 8;
         this.RUNNER_COLLIDER_MULT = 2.6;
         this.KEY_TILE = "octagon-trapezoid";
@@ -25,6 +26,9 @@ class MainLevel extends Phaser.Scene {
     create() {
         // INPUT ==============================================================
         cursors = this.input.keyboard.createCursorKeys();
+        esc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
         this.instructions = this.add.sprite(width/2, height*0.4, "instructions").setScale(0.7).setDepth(this.RUNNER_DEPTH).setAlpha(1);
         this.tweens.add({
             targets: this.instructions,
@@ -45,6 +49,8 @@ class MainLevel extends Phaser.Scene {
         this.runner.body.setSize(this.runner.width*this.RUNNER_COLLIDER_MULT,50);
         this.runner.body.setOffset(-this.runner.width*(this.RUNNER_COLLIDER_MULT-1)/2,this.runner.height-50);
         this.runner.invincible = false;
+        this.runner.health = this.MAX_HEALTH;
+        this.runner.dead = false;
 
         this.anims.create({
             key: "idle",
@@ -59,6 +65,13 @@ class MainLevel extends Phaser.Scene {
             frameRate: 8,
             repeat: -1,
             frames: this.anims.generateFrameNumbers("runner", {start: 2, end: 3})
+        });
+
+        this.anims.create({
+            key: "dead",
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("runner", {start: 4, end: 5})
         });
         
         // PHYSICS AND COLLISION ==============================================
@@ -99,36 +112,40 @@ class MainLevel extends Phaser.Scene {
 
 	update()
 	{
-        // INFO TEXT
-		const size = this.tileParent.getLength()
-        document.getElementById('info').innerHTML = `<strong>Controls</strong> Left/Right Arrows: rotate | D: debug (${this.physics.world.drawDebug}) ` +
-                                                    `| visible: ${size}`;
-
         // INPUT
         let rotationAmount = 0
         // handle left-right
         if (cursors.left.isDown) rotationAmount += -1;
         if (cursors.right.isDown) rotationAmount += 1;
 
-        if (rotationAmount == 0 && this.runner.anims.getName() != "idle") {
-            this.runner.play("idle");
+        if (!this.runner.dead) {
+            if (rotationAmount == 0 && this.runner.anims.getName() != "idle") {
+                this.runner.play("idle");
+            }
+            else if (rotationAmount != 0 && this.runner.anims.getName() != "run") {
+                this.runner.play("run");
+            }
+
+            if (rotationAmount > 0) this.runner.flipX = false;
+            if (rotationAmount < 0) this.runner.flipX = true;
+
+            let delta = rotationAmount * this.ROTATION_VELOCITY;
+            this.octagonBack.angle += delta;
+            this.octagonLines.angle += delta;
+
+            // update tiles
+            this.tileParent.children.iterate(tile => {
+                if (tile) tile.update(this.octagonLines.angle);
+                else this.tileParent.remove(tile);
+            })
+        } else { // runner is dead, prompt reset
+            if (esc.isDown) {
+                this.scene.start("mainMenuScene");
+            }
+            if (spacebar.isDown) {
+                this.scene.start("mainLevelScene");
+            }
         }
-        else if (rotationAmount != 0 && this.runner.anims.getName() != "run") {
-            this.runner.play("run");
-        }
-
-        if (rotationAmount > 0) this.runner.flipX = false;
-        if (rotationAmount < 0) this.runner.flipX = true;
-
-        let delta = rotationAmount * this.ROTATION_VELOCITY;
-        this.octagonBack.angle += delta;
-        this.octagonLines.angle += delta;
-
-        // update tiles
-        this.tileParent.children.iterate(tile => {
-            if (tile) tile.update(this.octagonLines.angle);
-            else this.tileParent.remove(tile);
-        })
     }
 
     spawnTiles() {
@@ -174,11 +191,20 @@ class MainLevel extends Phaser.Scene {
     }
 
     handleCollision() {
-        if (this.runner.invincible) {
+        if (this.runner.invincible || this.runner.dead) {
             return;
         } else { // They aren't currently invincible. Mark them as such, so this function is only called once.
             this.runner.invincible = true;
             this.runner.setTint(0xff5555);
+            this.runner.health--;
+            
+            if (this.runner.health == 0) {
+                // Handle game over.
+                this.runner.dead = true;
+                this.runner.play("dead");
+                this.spawnTimer.destroy();
+                console.log("GAME OVER.");
+            }
         }
 
         this.playHurtNoise();

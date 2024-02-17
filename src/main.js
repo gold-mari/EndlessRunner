@@ -22,4 +22,6 @@ let config = {
 let game = new Phaser.Game(config)
 
 let cursors
+let esc
+let spacebar
 let { height, width } = game.config
